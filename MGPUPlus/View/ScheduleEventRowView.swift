@@ -37,7 +37,7 @@ struct ScheduleEventRowView: View {
                     Spacer(minLength: 8)
 
                     if showStatusChip {
-                        Text(statusTitle)
+                        Text(statusKey)
                             .font(.caption2)
                             .fontWeight(.semibold)
                             .foregroundStyle(statusTextColor)
@@ -126,22 +126,22 @@ struct ScheduleEventRowView: View {
         }
     }
     
-    private var statusTitle: String {
+    private var statusKey: LocalizedStringKey {
         switch status {
         case .current:
-            return "Сейчас"
+            return "schedule.status.current"
         case .upcoming:
-            return "Скоро"
+            return "schedule.status.upcoming"
         case .finished:
-            return "Завершено"
+            return "schedule.status.finished"
         case .scheduled:
             return ""
         case .cancelled:
-            return "Отмена"
+            return "schedule.status.cancelled"
         case .replaced:
-            return "Замена"
+            return "schedule.status.replaced"
         case .online:
-            return "Онлайн"
+            return "schedule.status.online"
         }
     }
     

@@ -27,11 +27,11 @@ struct NewTaskView: View {
             .hSpacing(.leading)
 
             VStack(alignment: .leading, spacing: 8, content: {
-                Text("Название заметки")
+                Text("task.title.label")
                     .font(.caption)
                     .foregroundStyle(.gray)
 
-                TextField("Сделать коспект по ОРГ!", text: $taskTitle)
+                TextField("task.title.placeholder", text: $taskTitle)
                     .padding(.vertical, 12)
                     .padding(.horizontal, 15)
                     .background(.white.shadow(.drop(color: .black.opacity(0.25), radius: 2)), in: .rect(cornerRadius: 10))
@@ -40,7 +40,7 @@ struct NewTaskView: View {
 
             HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 8, content: {
-                    Text("Дата")
+                    Text("task.date.label")
                         .font(.caption)
                         .foregroundStyle(.gray)
 
@@ -53,7 +53,7 @@ struct NewTaskView: View {
                 .padding(.trailing, -15)
 
                 VStack(alignment: .leading, spacing: 8, content: {
-                    Text("Цвет")
+                    Text("task.color.label")
                         .font(.caption)
                         .foregroundStyle(.gray)
 
@@ -99,7 +99,7 @@ struct NewTaskView: View {
                     print(error.localizedDescription)
                 }
             }, label: {
-                Text("Создать заметку")
+                Text("task.create")
                     .font(.title3)
                     .fontWeight(.semibold)
                     .textScale(.secondary)

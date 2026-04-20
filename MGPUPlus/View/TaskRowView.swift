@@ -45,7 +45,7 @@ struct TaskRowView: View {
             .strikethrough(task.isCompleted, pattern: .solid, color: .black)
             .contentShape(.contextMenuPreview, .rect(cornerRadius: 15))
             .contextMenu {
-                Button("Delete Task", role: .destructive) {
+                Button("task.delete", role: .destructive) {
                     // Deleting Task
                     context.delete(task)
                     try? context.save()

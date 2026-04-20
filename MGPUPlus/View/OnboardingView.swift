@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct OnboardingView: View {
+    @Environment(\.dismiss) private var dismiss
     @AppStorage("selectedFaculty") private var selectedFacultyStorage: String = ""
     @AppStorage("selectedGroup") private var selectedGroupStorage: String = ""
 
@@ -21,20 +22,20 @@ struct OnboardingView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Text("Добро пожаловать")
+            Text("onboarding.title")
                 .font(.largeTitle.bold())
                 .foregroundStyle(.mcuRed)
 
-            Text("Выбери свой факультет и группу, чтобы видеть персональное расписание.")
+            Text("onboarding.subtitle")
                 .font(.callout)
                 .foregroundStyle(.gray)
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("Факультет")
+                Text("onboarding.faculty")
                     .font(.caption)
                     .foregroundStyle(.gray)
 
-                Picker("Факультет", selection: $selectedFaculty) {
+                Picker("onboarding.faculty", selection: $selectedFaculty) {
                     ForEach(StudyCatalog.faculties) { faculty in
                         Text(faculty.name).tag(faculty.name)
                     }
@@ -46,11 +47,11 @@ struct OnboardingView: View {
             }
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("Группа")
+                Text("onboarding.group")
                     .font(.caption)
                     .foregroundStyle(.gray)
 
-                Picker("Группа", selection: $selectedGroup) {
+                Picker("onboarding.group", selection: $selectedGroup) {
                     ForEach(availableGroups, id: \.self) { group in
                         Text(group).tag(group)
                     }
@@ -64,7 +65,7 @@ struct OnboardingView: View {
             Spacer(minLength: 0)
 
             Button(action: saveProfile, label: {
-                Text("Продолжить")
+                Text("onboarding.continue")
                     .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundStyle(.black)
@@ -89,6 +90,7 @@ struct OnboardingView: View {
     private func saveProfile() {
         selectedFacultyStorage = selectedFaculty
         selectedGroupStorage = selectedGroup
+        dismiss()
     }
 }
 

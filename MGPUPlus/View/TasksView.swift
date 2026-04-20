@@ -46,7 +46,7 @@ struct TasksView: View {
         VStack(alignment: .leading, spacing: 20) {
             if !scheduleEvents.isEmpty {
                 if showSectionHeaders {
-                    Text("Расписание")
+                    Text("schedule.section")
                         .font(.headline)
                         .foregroundStyle(.mcuGrey)
                 }
@@ -66,7 +66,7 @@ struct TasksView: View {
 
             if !tasks.isEmpty {
                 if showSectionHeaders {
-                    Text("Мои задачи")
+                    Text("task.section")
                         .font(.headline)
                         .foregroundStyle(.mcuGrey)
                 }
@@ -90,7 +90,7 @@ struct TasksView: View {
         .padding(.top, 15)
         .overlay {
             if tasks.isEmpty && scheduleEvents.isEmpty {
-                Text("На этот день ничего нет")
+                Text("schedule.empty")
                     .font(.caption)
                     .foregroundStyle(.gray)
                     .frame(width: 170)
