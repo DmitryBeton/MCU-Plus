@@ -17,6 +17,10 @@ struct ContentView: View {
         Group {
             if hasSelectedProfile {
                 TabView {
+                    Tab("tab.news", systemImage: "newspaper") {
+                        NewsView()
+                    }
+
                     Tab("tab.schedule", systemImage: "calendar") {
                         Home(selectedFaculty: selectedFaculty, selectedGroup: selectedGroup)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
