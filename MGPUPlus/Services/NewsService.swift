@@ -11,13 +11,29 @@ struct NewsService {
     }
 
     func fetchNews() async throws -> [NewsItem] {
-        var request = URLRequest(url: newsURL)
+        try await fetchNews(page: 1)
+    }
+
+    func fetchNews(page: Int) async throws -> [NewsItem] {
+        var components = URLComponents(url: newsURL, resolvingAgainstBaseURL: false)
+        if page > 1 {
+            components?.queryItems = [
+                URLQueryItem(name: "sf_paged", value: "\(page)")
+            ]
+        }
+
+        guard let pageURL = components?.url else {
+            throw NewsServiceError.invalidResponse
+        }
+
+        var request = URLRequest(url: pageURL)
         request.setValue("Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)", forHTTPHeaderField: "User-Agent")
         request.timeoutInterval = 30
 
         let html = try await fetchHTML(for: request)
         let news = parseNews(from: html)
-        guard !news.isEmpty else {
+
+        if page == 1, news.isEmpty {
             throw NewsServiceError.noNewsFound
         }
 

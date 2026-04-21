@@ -3,7 +3,10 @@ import SwiftUI
 struct NewsView: View {
     @State private var items: [NewsItem] = []
     @State private var isLoading = false
+    @State private var isLoadingNextPage = false
     @State private var errorMessage: String?
+    @State private var currentPage = 1
+    @State private var canLoadMore = true
 
     private let newsService = NewsService()
 
@@ -45,6 +48,18 @@ struct NewsView: View {
                 LazyVStack(spacing: 16) {
                     ForEach(items) { item in
                         NewsCardView(item: item)
+                            .onAppear {
+                                guard item.id == items.suffix(3).first?.id else { return }
+                                _Concurrency.Task {
+                                    await loadNextPageIfNeeded()
+                                }
+                            }
+                    }
+
+                    if isLoadingNextPage {
+                        ProgressView()
+                            .tint(.mcuRed)
+                            .padding(.vertical, 8)
                     }
                 }
                 .padding(16)
@@ -62,10 +77,46 @@ struct NewsView: View {
         defer { isLoading = false }
 
         do {
-            items = try await newsService.fetchNews()
+            currentPage = 1
+            canLoadMore = true
+            items = try await newsService.fetchNews(page: currentPage)
+            canLoadMore = !items.isEmpty
             errorMessage = nil
         } catch {
             errorMessage = error.localizedDescription
+        }
+    }
+
+    @MainActor
+    private func loadNextPageIfNeeded() async {
+        guard !isLoading, !isLoadingNextPage, canLoadMore, !items.isEmpty else {
+            return
+        }
+
+        isLoadingNextPage = true
+        defer { isLoadingNextPage = false }
+
+        do {
+            let nextPage = currentPage + 1
+            let nextItems = try await newsService.fetchNews(page: nextPage)
+
+            if nextItems.isEmpty {
+                canLoadMore = false
+                return
+            }
+
+            let existingIDs = Set(items.map(\.id))
+            let uniqueItems = nextItems.filter { !existingIDs.contains($0.id) }
+
+            if uniqueItems.isEmpty {
+                canLoadMore = false
+                return
+            }
+
+            items.append(contentsOf: uniqueItems)
+            currentPage = nextPage
+        } catch {
+            canLoadMore = false
         }
     }
 }
