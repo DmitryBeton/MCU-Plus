@@ -1,4 +1,10 @@
 "tab.news" = "News";
+"news.loading" = "Loading news";
+"news.error.title" = "News unavailable";
+"news.error.load" = "Could not load the news page";
+"news.error.parse" = "Could not parse the news page";
+"news.retry" = "Retry";
+"news.empty" = "No news found";
 "tab.schedule" = "Schedule";
 "tab.settings" = "Settings";
 "onboarding.title" = "Welcome";

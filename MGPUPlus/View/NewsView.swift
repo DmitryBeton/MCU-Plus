@@ -1,39 +1,72 @@
 import SwiftUI
 
 struct NewsView: View {
-    private let mockNews: [NewsItem] = [
-        NewsItem(
-            title: "МГПУ запускает весеннюю школу цифровых практик",
-            summary: "Студенты смогут принять участие в интенсиве по современным образовательным технологиям и разработке интерактивных учебных материалов.",
-            imageURL: URL(string: "https://picsum.photos/seed/mgpu-news-1/800/500")
-        ),
-        NewsItem(
-            title: "В университете пройдет серия открытых лекций для абитуриентов",
-            summary: "Преподаватели института расскажут о направлениях подготовки, учебных проектах и возможностях студенческой жизни в новом семестре.",
-            imageURL: URL(string: "https://picsum.photos/seed/mgpu-news-2/800/500")
-        ),
-        NewsItem(
-            title: "Команда волонтеров представила обновленную инициативу для кампуса",
-            summary: "В проект вошли новые студенческие сервисы, поддержка навигации по корпусам и единая лента университетских новостей.",
-            imageURL: URL(string: "https://picsum.photos/seed/mgpu-news-3/800/500")
-        )
-    ]
+    @State private var items: [NewsItem] = []
+    @State private var isLoading = false
+    @State private var errorMessage: String?
+
+    private let newsService = NewsService()
 
     var body: some View {
         NavigationStack {
+            content
+                .background(Color.appDarkGroupedBackground)
+                .navigationTitle("tab.news")
+                .task {
+                    guard items.isEmpty else { return }
+                    await loadNews()
+                }
+        }
+        .background(Color.appDarkGroupedBackground)
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if isLoading && items.isEmpty {
+            ProgressView("news.loading")
+                .tint(.mcuRed)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if let errorMessage, items.isEmpty {
+            ContentUnavailableView {
+                Label("news.error.title", systemImage: "newspaper")
+            } description: {
+                Text(errorMessage)
+            } actions: {
+                Button("news.retry") {
+                    _Concurrency.Task {
+                        await loadNews()
+                    }
+                }
+            }
+        } else if items.isEmpty {
+            ContentUnavailableView("news.empty", systemImage: "newspaper")
+        } else {
             ScrollView {
                 LazyVStack(spacing: 16) {
-                    ForEach(mockNews) { item in
+                    ForEach(items) { item in
                         NewsCardView(item: item)
                     }
                 }
                 .padding(16)
             }
             .scrollIndicators(.hidden)
-            .background(Color.appDarkGroupedBackground)
-            .navigationTitle("tab.news")
+            .refreshable {
+                await loadNews()
+            }
         }
-        .background(Color.appDarkGroupedBackground)
+    }
+
+    @MainActor
+    private func loadNews() async {
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            items = try await newsService.fetchNews()
+            errorMessage = nil
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 }
 
@@ -43,37 +76,48 @@ private struct NewsCardView: View {
     let item: NewsItem
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            AsyncImage(url: item.imageURL) { phase in
-                switch phase {
-                case .empty:
-                    placeholder
-                case let .success(image):
-                    image
-                        .resizable()
-                        .scaledToFill()
-                case .failure:
-                    placeholder
-                @unknown default:
-                    placeholder
+        Link(destination: item.articleURL) {
+            VStack(alignment: .leading, spacing: 14) {
+                AsyncImage(url: item.imageURL) { phase in
+                    switch phase {
+                    case .empty:
+                        placeholder
+                    case let .success(image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    case .failure:
+                        placeholder
+                    @unknown default:
+                        placeholder
+                    }
+                }
+                .frame(height: 180)
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+
+                VStack(alignment: .leading, spacing: 8) {
+                    if !metaText.isEmpty {
+                        Text(metaText)
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(.mcuRed)
+                    }
+
+                    Text(item.title)
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(Color(uiColor: .label))
+                        .multilineTextAlignment(.leading)
+
+                    Text(item.summary)
+                        .font(.subheadline)
+                        .foregroundStyle(Color(uiColor: .secondaryLabel))
+                        .lineLimit(4)
+                        .multilineTextAlignment(.leading)
                 }
             }
-            .frame(height: 180)
-            .clipShape(RoundedRectangle(cornerRadius: 18))
-
-            VStack(alignment: .leading, spacing: 8) {
-                Text(item.title)
-                    .font(.title3.weight(.semibold))
-                    .foregroundStyle(Color(uiColor: .label))
-
-                Text(item.summary)
-                    .font(.subheadline)
-                    .foregroundStyle(Color(uiColor: .secondaryLabel))
-                    .lineLimit(3)
-            }
+            .padding(14)
+            .background(cardBackgroundColor, in: RoundedRectangle(cornerRadius: 22))
         }
-        .padding(14)
-        .background(cardBackgroundColor, in: RoundedRectangle(cornerRadius: 22))
+        .buttonStyle(.plain)
     }
 
     private var placeholder: some View {
@@ -92,13 +136,12 @@ private struct NewsCardView: View {
     private var cardBackgroundColor: Color {
         colorScheme == .dark ? Color.appDarkCardBackground : .mcuLightGrey.opacity(0.25)
     }
-}
 
-private struct NewsItem: Identifiable {
-    let id = UUID()
-    let title: String
-    let summary: String
-    let imageURL: URL?
+    private var metaText: String {
+        [item.sourceTitle, item.dateText]
+            .filter { !$0.isEmpty }
+            .joined(separator: " · ")
+    }
 }
 
 #Preview {

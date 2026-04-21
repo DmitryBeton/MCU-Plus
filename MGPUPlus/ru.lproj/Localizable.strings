@@ -1,4 +1,10 @@
 "tab.news" = "Новости";
+"news.loading" = "Загружаем новости";
+"news.error.title" = "Новости недоступны";
+"news.error.load" = "Не удалось загрузить страницу новостей";
+"news.error.parse" = "Не удалось разобрать страницу новостей";
+"news.retry" = "Повторить";
+"news.empty" = "Новости не найдены";
 "tab.schedule" = "Расписание";
 "tab.settings" = "Настройки";
 "onboarding.title" = "Добро пожаловать";

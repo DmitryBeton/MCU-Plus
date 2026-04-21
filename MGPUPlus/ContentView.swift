@@ -8,28 +8,41 @@
 import SwiftUI
 
 struct ContentView: View {
+    private enum TabSelection: Hashable {
+        case news
+        case schedule
+        case settings
+    }
+
     @AppStorage("selectedFaculty") private var selectedFaculty: String = ""
     @AppStorage("selectedGroup") private var selectedGroup: String = ""
     @AppStorage("appLanguage") private var appLanguage: String = "ru"
     @AppStorage("appTheme") private var appTheme: String = "light"
+    @State private var selectedTab: TabSelection = .schedule
 
     var body: some View {
         Group {
             if hasSelectedProfile {
-                TabView {
-                    Tab("tab.news", systemImage: "newspaper") {
-                        NewsView()
-                    }
+                TabView(selection: $selectedTab) {
+                    NewsView()
+                        .tabItem {
+                            Label("tab.news", systemImage: "newspaper")
+                        }
+                        .tag(TabSelection.news)
 
-                    Tab("tab.schedule", systemImage: "calendar") {
-                        Home(selectedFaculty: selectedFaculty, selectedGroup: selectedGroup)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(Color.appDarkGroupedBackground)
-                    }
+                    Home(selectedFaculty: selectedFaculty, selectedGroup: selectedGroup)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color.appDarkGroupedBackground)
+                        .tabItem {
+                            Label("tab.schedule", systemImage: "calendar")
+                        }
+                        .tag(TabSelection.schedule)
 
-                    Tab("tab.settings", systemImage: "gearshape") {
-                        SettingsView()
-                    }
+                    SettingsView()
+                        .tabItem {
+                            Label("tab.settings", systemImage: "gearshape")
+                        }
+                        .tag(TabSelection.settings)
                 }
                 .tint(.mcuRed)
             } else {
