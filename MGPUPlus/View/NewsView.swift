@@ -38,6 +38,8 @@ struct NewsView: View {
 }
 
 private struct NewsCardView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     let item: NewsItem
 
     var body: some View {
@@ -71,7 +73,7 @@ private struct NewsCardView: View {
             }
         }
         .padding(14)
-        .background(Color.appDarkCardBackground, in: RoundedRectangle(cornerRadius: 22))
+        .background(cardBackgroundColor, in: RoundedRectangle(cornerRadius: 22))
     }
 
     private var placeholder: some View {
@@ -85,6 +87,10 @@ private struct NewsCardView: View {
                 .font(.system(size: 28, weight: .semibold))
                 .foregroundStyle(.white.opacity(0.85))
         }
+    }
+
+    private var cardBackgroundColor: Color {
+        colorScheme == .dark ? Color.appDarkCardBackground : .mcuLightGrey.opacity(0.25)
     }
 }
 
