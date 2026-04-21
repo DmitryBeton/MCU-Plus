@@ -80,7 +80,7 @@ struct Home: View {
                 .presentationDetents([.height(300)])
                 .interactiveDismissDisabled()
                 .presentationCornerRadius(30)
-                .presentationBackground(.mcuBackground)
+                .presentationBackground(Color.appDarkGroupedBackground)
         })
         .sheet(isPresented: $showProfileEditor) {
             OnboardingView()
@@ -128,12 +128,12 @@ struct Home: View {
             }, label: {
                 instituteLogoView
                     .frame(width: 45, height: 45)
-                    .background(Color(uiColor: .secondarySystemBackground), in: .circle)
+                    .background(Color.appDarkCardBackground, in: .circle)
                     .clipShape(.circle)
             })
         })
         .padding(15)
-        .background(Color(uiColor: .systemBackground))
+        .background(Color.appDarkBackground)
         .onChange(of: currentWeekIndex, initial: false) { _, newValue in
             if suppressWeekIndexObserver {
                 return
@@ -192,7 +192,7 @@ struct Home: View {
                                     .offset(y: 12)
                             }
                         })
-                        .background(Color(uiColor: .secondarySystemBackground).shadow(.drop(radius: 1)), in: .circle)
+                        .background(Color.appDarkCardBackground.shadow(.drop(radius: 1)), in: .circle)
                 }
                 .hSpacing(.center)
                 .contentShape(.rect)

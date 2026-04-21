@@ -12,6 +12,7 @@
 "settings.language.english" = "English";
 "settings.theme.section" = "Тема";
 "settings.theme.title" = "Оформление";
+"settings.theme.system" = "Системная";
 "settings.theme.light" = "Светлая";
 "settings.theme.dark" = "Темная";
 "settings.study.section" = "Профиль обучения";

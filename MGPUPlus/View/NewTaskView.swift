@@ -35,7 +35,7 @@ struct NewTaskView: View {
                     .padding(.vertical, 12)
                     .padding(.horizontal, 15)
                     .background(
-                        Color(uiColor: .secondarySystemBackground)
+                        Color.appDarkCardBackground
                             .shadow(.drop(color: .black.opacity(0.15), radius: 2)),
                         in: .rect(cornerRadius: 10)
                     )
@@ -116,7 +116,7 @@ struct NewTaskView: View {
             .opacity(taskTitle == "" ? 0.5 : 1)
         })
         .padding(15)
-        .background(Color(uiColor: .systemGroupedBackground))
+        .background(Color.appDarkGroupedBackground)
     }
 }
 

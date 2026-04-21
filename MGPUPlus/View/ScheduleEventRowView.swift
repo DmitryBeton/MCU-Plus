@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ScheduleEventRowView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     let event: ScheduleEvent
     
     private enum LessonStatus {
@@ -22,7 +24,7 @@ struct ScheduleEventRowView: View {
                 .fill(indicatorFillColor)
                 .frame(width: 10, height: 10)
                 .padding(4)
-                .background(Color(uiColor: .secondarySystemBackground).shadow(.drop(color: .black.opacity(0.1), radius: 3)), in: .circle)
+                .background(Color.appDarkCardBackground.shadow(.drop(color: .black.opacity(0.1), radius: 3)), in: .circle)
                 .overlay {
                     Circle()
                         .stroke(status == .current ? .mcuRed : .clear, lineWidth: status == .current ? 2 : 0)
@@ -49,7 +51,7 @@ struct ScheduleEventRowView: View {
 
                 Text("\(startTime) - \(endTime)")
                     .font(.caption)
-                    .foregroundStyle(status == .current ? .mcuRed : .mcuGrey)
+                    .foregroundStyle(timeTextColor)
                     .strikethrough(status == .cancelled, pattern: .solid, color: .gray)
 
                 Text("\(event.teacher) · \(event.room)")
@@ -174,6 +176,23 @@ struct ScheduleEventRowView: View {
             return .gray
         case .scheduled:
             return .clear
+        case .cancelled:
+            return .gray
+        case .replaced:
+            return .orange
+        case .online:
+            return .blue
+        }
+    }
+
+    private var timeTextColor: Color {
+        switch status {
+        case .current:
+            return .mcuRed
+        case .upcoming, .scheduled:
+            return colorScheme == .dark ? Color(uiColor: .label) : .mcuGrey
+        case .finished:
+            return Color(uiColor: .secondaryLabel)
         case .cancelled:
             return .gray
         case .replaced:

@@ -20,7 +20,7 @@ struct ContentView: View {
                     Tab("tab.schedule", systemImage: "calendar") {
                         Home(selectedFaculty: selectedFaculty, selectedGroup: selectedGroup)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(Color(uiColor: .systemGroupedBackground))
+                            .background(Color.appDarkGroupedBackground)
                     }
 
                     Tab("tab.settings", systemImage: "gearshape") {

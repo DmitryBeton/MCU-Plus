@@ -12,6 +12,7 @@
 "settings.language.english" = "English";
 "settings.theme.section" = "Theme";
 "settings.theme.title" = "Appearance";
+"settings.theme.system" = "System";
 "settings.theme.light" = "Light";
 "settings.theme.dark" = "Dark";
 "settings.study.section" = "Study Profile";

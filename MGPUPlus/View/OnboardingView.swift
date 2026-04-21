@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct OnboardingView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
     @AppStorage("selectedFaculty") private var selectedFacultyStorage: String = ""
     @AppStorage("selectedGroup") private var selectedGroupStorage: String = ""
@@ -43,7 +44,7 @@ struct OnboardingView: View {
                 .pickerStyle(.menu)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 12)
-                .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 10))
+                .background(selectionBackgroundColor, in: RoundedRectangle(cornerRadius: 10))
             }
 
             VStack(alignment: .leading, spacing: 8) {
@@ -59,7 +60,7 @@ struct OnboardingView: View {
                 .pickerStyle(.menu)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 12)
-                .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 10))
+                .background(selectionBackgroundColor, in: RoundedRectangle(cornerRadius: 10))
             }
 
             Spacer(minLength: 0)
@@ -75,7 +76,7 @@ struct OnboardingView: View {
             })
         }
         .padding(20)
-        .background(Color(uiColor: .systemGroupedBackground))
+        .background(Color.appDarkGroupedBackground)
         .onChange(of: selectedFaculty, initial: false) { _, _ in
             if !availableGroups.contains(selectedGroup) {
                 selectedGroup = availableGroups.first ?? ""
@@ -91,6 +92,10 @@ struct OnboardingView: View {
         selectedFacultyStorage = selectedFaculty
         selectedGroupStorage = selectedGroup
         dismiss()
+    }
+
+    private var selectionBackgroundColor: Color {
+        colorScheme == .dark ? Color.appDarkCardBackground : .mcuLightGrey.opacity(0.28)
     }
 }
 

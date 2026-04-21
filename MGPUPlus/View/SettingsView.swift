@@ -19,6 +19,7 @@ struct SettingsView: View {
 
                 Section("settings.theme.section") {
                     Picker("settings.theme.title", selection: $appTheme) {
+                        Text("settings.theme.system").tag("system")
                         Text("settings.theme.light").tag("light")
                         Text("settings.theme.dark").tag("dark")
                     }
@@ -41,10 +42,13 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("tab.settings")
+            .scrollContentBackground(.hidden)
+            .background(Color.appDarkGroupedBackground)
             .sheet(isPresented: $showOnboarding) {
                 OnboardingView()
             }
         }
+        .background(Color.appDarkGroupedBackground)
     }
 }
 

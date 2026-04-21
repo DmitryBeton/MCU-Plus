@@ -18,7 +18,7 @@ struct TaskRowView: View {
                 .fill(indicatorColor)
                 .frame(width: 10, height: 10)
                 .padding(4)
-                .background(Color(uiColor: .secondarySystemBackground).shadow(.drop(color: .black.opacity(0.1), radius: 3)), in: .circle)
+                .background(Color.appDarkCardBackground.shadow(.drop(color: .black.opacity(0.1), radius: 3)), in: .circle)
                 .overlay {
                     Circle()
                         .frame(width: 50, height: 50)

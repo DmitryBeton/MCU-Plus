@@ -7,6 +7,44 @@
 
 import SwiftUI
 
+extension Color {
+    static var appDarkBackground: Color {
+        Color(
+            uiColor: UIColor { traitCollection in
+                if traitCollection.userInterfaceStyle == .dark {
+                    return UIColor(red: 18 / 255, green: 19 / 255, blue: 22 / 255, alpha: 1)
+                }
+
+                return .systemBackground
+            }
+        )
+    }
+
+    static var appDarkGroupedBackground: Color {
+        Color(
+            uiColor: UIColor { traitCollection in
+                if traitCollection.userInterfaceStyle == .dark {
+                    return UIColor(red: 22 / 255, green: 24 / 255, blue: 28 / 255, alpha: 1)
+                }
+
+                return .systemGroupedBackground
+            }
+        )
+    }
+
+    static var appDarkCardBackground: Color {
+        Color(
+            uiColor: UIColor { traitCollection in
+                if traitCollection.userInterfaceStyle == .dark {
+                    return UIColor(red: 30 / 255, green: 32 / 255, blue: 37 / 255, alpha: 1)
+                }
+
+                return .secondarySystemBackground
+            }
+        )
+    }
+}
+
 // Custom View Extension
 extension View {
     /// Custom Spacers
