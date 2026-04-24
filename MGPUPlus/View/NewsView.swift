@@ -15,12 +15,12 @@ struct NewsView: View {
             content
                 .background(Color.appDarkGroupedBackground)
                 .navigationTitle("tab.news")
-                .task {
-                    guard items.isEmpty else { return }
-                    await loadNews()
-                }
         }
         .background(Color.appDarkGroupedBackground)
+        .task {
+            guard items.isEmpty, !isLoading else { return }
+            await loadNews()
+        }
     }
 
     @ViewBuilder
@@ -73,6 +73,7 @@ struct NewsView: View {
 
     @MainActor
     private func loadNews() async {
+        debugLog("Reload news started")
         isLoading = true
         defer { isLoading = false }
 
@@ -82,26 +83,33 @@ struct NewsView: View {
             items = try await newsService.fetchNews(page: currentPage)
             canLoadMore = !items.isEmpty
             errorMessage = nil
+            debugLog("Loaded first page with \(items.count) items")
+        } catch is CancellationError {
+            debugLog("First page load was cancelled by SwiftUI")
         } catch {
             errorMessage = error.localizedDescription
+            debugLog("Failed to load first page: \(error.localizedDescription)")
         }
     }
 
     @MainActor
     private func loadNextPageIfNeeded() async {
         guard !isLoading, !isLoadingNextPage, canLoadMore, !items.isEmpty else {
+            debugLog("Skip next page load. isLoading=\(isLoading), isLoadingNextPage=\(isLoadingNextPage), canLoadMore=\(canLoadMore), items=\(items.count)")
             return
         }
 
+        let nextPage = currentPage + 1
+        debugLog("Start loading next page \(nextPage)")
         isLoadingNextPage = true
         defer { isLoadingNextPage = false }
 
         do {
-            let nextPage = currentPage + 1
             let nextItems = try await newsService.fetchNews(page: nextPage)
 
             if nextItems.isEmpty {
                 canLoadMore = false
+                debugLog("Page \(nextPage) returned 0 items. Stop pagination")
                 return
             }
 
@@ -110,14 +118,25 @@ struct NewsView: View {
 
             if uniqueItems.isEmpty {
                 canLoadMore = false
+                debugLog("Page \(nextPage) only contains duplicates. Stop pagination")
                 return
             }
 
             items.append(contentsOf: uniqueItems)
             currentPage = nextPage
+            debugLog("Appended \(uniqueItems.count) items from page \(nextPage). Total items: \(items.count)")
+        } catch is CancellationError {
+            debugLog("Page \(nextPage) load was cancelled by SwiftUI")
         } catch {
             canLoadMore = false
+            debugLog("Failed to load page \(nextPage): \(error.localizedDescription)")
         }
+    }
+
+    private func debugLog(_ message: String) {
+#if DEBUG
+        print("[NewsView] \(message)")
+#endif
     }
 }
 
